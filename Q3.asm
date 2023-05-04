@@ -1,37 +1,63 @@
-;Q1
+;Q3
 ;all assumptions are mentioned as comment
-
 org 100h                                     
-mov cl,13
-mov si,4
-
-for_loop:          
-    mov ax, my_array[si-2]       
-    add ax, my_array[si-4]
+         
+mov dx, offset buffer
+mov ah, 0ah
+int 21h    
+                          
+mov si, 0   
+counter db 0
+while_loop1:   
+    mov bl, buffer[si]
+    cmp bl, 13
+    je break1          
+    mov bh, 0
+    push bx
     
-    cmp ax,my_array[si]
-    jbe fail                                              
+    mov bh, counter           
+    inc bh
+    mov counter, bh           
+jmp while_loop1
+break1:    
+
+mov cl, counter
+mov ch, 0  
+mov bl, 1
+while_loop2:  
+    jcxz break2
     
-    add si, 2    
-loop for_loop    
+    pop ax
+    mul bl
+    add number, al                        
+            
+    mov al, bl
+    mul factor
+    mov bl, al            
+loop while_loop2                  
+break2:
+   
+                                         
+       
+nonDigitEntered:  
+mov ah, 2
+mov dl, 10
+int 21h
+mov dl, 13
+int 21h  
 
-mov ah, 1    
-jmp exit
-
-                 
-fail:
-    mov ah, 0    
-    jmp exit
-                   
- 
-exit:          
-ret
-
-;we assume that the array is sorted in ascending order 
-;the first array below is generated according to this rule: my_array[x] = my_array[x-1] + my_array[x-2] -1  
-    
-    my_array dw  2, 3, 4, 6, 9, 14, 22, 35, 56, 90, 145, 234, 378, 611, 988     ;should generate successful result
-
-
-
-
+mov dx, offset nonDigitErrorMsg
+mov ah, 9
+int 21h
+                                         
+                                         
+ret                 
+       
+number db 0   
+factor db 10    
+      
+; numbers above 99 can't be enterd. (width of the console is 80 by default)      
+buffer db 3,?, 3 dup(' ')
+        
+        
+nonDigitErrorMsg db "error: a non-digit character was entered!$"               
