@@ -1,19 +1,25 @@
 ;Q1
 ;all assumptions are mentioned as comment
+org 100h    
 
-org 100h                                     
+; initializing loop counter:
 mov cl,13
+; initializing array index: it is gonna increase by each iteration 
 mov si,4
 
-for_loop:          
+for_loop:
+    ;calculating sum of the smaller numbers          
     mov ax, my_array[si-2]       
     add ax, my_array[si-4]
     
+    ;comparing the sum with the larger number
     cmp ax,my_array[si]
     jbe fail                                              
     
+    ;increasing array index by two: (for word array)
     add si, 2    
 loop for_loop    
+
 
 mov ah, 1    
 jmp exit

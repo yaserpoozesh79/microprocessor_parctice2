@@ -56,21 +56,19 @@ int 21h
 exit:                                         
 ret                 
        
-number db 0   
-factor db 10    
+number db 0       
 counter db 0         
          
 ; numbers above 99 can't be enterd. (width of the console is 80 by default)      
 buffer db 3,?, 3 dup(' ')
-        
-        
+               
 nonDigitErrorMsg db "error: a non-digit character was entered!$"               
-
                   
-  
+factor db 10  
 printSquare proc 
     pusha
-    
+    cmp number, 0
+    jle returnPrintSquare
     ; initializing loop counter by the number entered by user
     mov cl, number
     mov ch, 0  
@@ -80,8 +78,7 @@ printSquare proc
         mov dl, '*'
         int 21h 
     loop for_topLine: 
-    call printNewl
-     
+    call printNewl  
     ; printing number-2 lines for middel lines 
     mov cl, number
     mov ch, 0 
@@ -92,7 +89,6 @@ printSquare proc
         mov ah, 2
         mov dl, '*'
         int 21h
-        
         push cx 
         mov cl, number
         mov ch, 0 
@@ -114,7 +110,8 @@ printSquare proc
     loop for_middleLines:
     break_middleLines:
 
-    cmp number,      
+    cmp number, 1
+    jle returnPrintSquare     
     mov cl, number
     mov ch, 0  
     for_bottomLine:     
@@ -122,7 +119,8 @@ printSquare proc
         mov dl, '*'
         int 21h 
     loop for_bottomLine:     
-         
+
+    returnPrintSquare:     
     popa
     ret
 printSquare endp                      
